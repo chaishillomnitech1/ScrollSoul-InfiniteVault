@@ -223,3 +223,125 @@ The architecture supports future additions:
 - Enhanced AI patterns
 - Advanced governance models
 - Cross-chain interactions
+
+---
+
+## GoHighLevel Sub-Account Architecture
+
+### Integration Overview
+
+```
+                    ┌──────────────────────────────────────────┐
+                    │         ScrollSoulGHLBridge               │
+                    │   (Master Orchestrator — Python + JS)     │
+                    └──────────────────┬───────────────────────┘
+                                       │
+              ┌────────────────────────┼────────────────────────┐
+              │                        │                        │
+    ┌─────────▼──────────┐  ┌─────────▼──────────┐  ┌─────────▼──────────┐
+    │  MultiLayerScaler  │  │SpotifyRoyaltyHarv. │  │ RecursiveAIEngine  │
+    │  → Custom Values   │  │  → Contacts + Opps │  │  → Campaign Trigger│
+    └────────────────────┘  └────────────────────┘  └────────────────────┘
+              │                        │                        │
+    ┌─────────▼──────────┐  ┌─────────▼──────────┐             │
+    │  BlockchainConnector│  │ UniversalGovernance│             │
+    │  NFTManager         │  │  → Pipeline Opps   │             │
+    │  → Contacts + Notes │  └────────────────────┘             │
+    └────────────────────┘                                       │
+              │                                                  │
+              └───────────────────┬──────────────────────────────┘
+                                  │
+              ┌───────────────────▼───────────────────────────────┐
+              │              GoHighLevelClient                     │
+              │    (V1/V2 REST API — DinoRunner retry/backoff)     │
+              └───────────────────┬───────────────────────────────┘
+                                  │
+    ┌─────────────────────────────▼──────────────────────────────┐
+    │                    Sub-Account Layer                        │
+    │                                                             │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+    │  │Location A│  │Location B│  │Location C│  │Location N│  │
+    │  │(Sub-Acct)│  │(Sub-Acct)│  │(Sub-Acct)│  │(Sub-Acct)│  │
+    │  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+    │                                                             │
+    │  Per-location: Contacts, Pipelines, Campaigns,             │
+    │  Conversations, Webhooks, Calendars, Custom Fields, Tags    │
+    └─────────────────────────────────────────────────────────────┘
+```
+
+### Sub-Account Deep-Dive Flow
+
+```
+introspect_all_locations()
+  │
+  ├─ list_locations()                    → agency API
+  │
+  └─ for each location:
+       ├─ get_location(id)               → name, email, timezone
+       ├─ GET /contacts/?limit=100       → contact count + sample
+       ├─ GET /pipelines/                → pipeline list
+       │   └─ GET /pipelines/{id}/opportunities/ → opportunity count
+       ├─ GET /campaigns/                → campaign list
+       ├─ GET /conversations/?limit=20   → conversation count
+       ├─ GET /tags/                     → tag names
+       ├─ GET /custom-values/            → custom field count
+       └─ GET /hooks/                    → webhook count
+```
+
+### Cross-Location Execution Pattern
+
+```python
+# Python
+bridge.sub_accounts.execute_across_all_locations(
+    action=lambda loc_id: bridge.sync_scaling_metrics(status, location_id=loc_id)
+)
+
+# JavaScript — with DinoRunner resilience
+runner.executeAcrossLocations(locationIds, async (locId) => {
+    return bridge.syncScalingMetrics(payload, locId);
+});
+```
+
+### DinoRunner Circuit-Breaker States
+
+```
+CLOSED (normal)
+    │  5 consecutive failures
+    ▼
+OPEN (blocked)
+    │  60 seconds elapsed
+    ▼
+HALF-OPEN (one attempt allowed)
+    │  success
+    ▼
+CLOSED (reset)
+```
+
+### Module → GHL Mapping
+
+| ScrollSoul Module       | GHL Resource         | Bridge Method                          |
+|------------------------|----------------------|----------------------------------------|
+| MultiLayerScaler        | Custom Values        | `sync_scaling_metrics()`              |
+| SpotifyRoyaltyHarvester | Contacts + Opps      | `sync_royalty_report()`               |
+| RecursiveAIEngine       | Campaign Trigger     | `trigger_ai_campaign()`               |
+| NFTManager              | Contacts + Notes     | `sync_nft_owner_to_ghl()`             |
+| UniversalGovernance     | Pipeline Opportunity | `sync_proposal_to_pipeline()`         |
+| All modules             | All sub-accounts     | `execute_full_sync_across_all_locations()` |
+
+### JavaScript Module Structure
+
+```
+src/js/
+  ├── gohighlevel.js   GoHighLevelClient, SubAccountManager, ContactManager,
+  │                    PipelineManager, CampaignManager, ConversationManager,
+  │                    WebhookHandler, CustomFieldManager, ScrollSoulGHLBridge
+  ├── blockchain.js    Block, BlockchainConnector, NFT, NFTManager
+  ├── governance.js    Vote, Proposal, UniversalGovernance
+  └── index.js         Unified exports for all JS modules
+
+Root JS files (fully implemented):
+  multi_layer_scaling_script.js   MultiLayerScaler, ScalingLayer
+  spotify_royalty_harvesting.js   SpotifyRoyaltyHarvester, RoyaltyStream
+  ai_loop_enhancements.js         RecursiveAIEngine, RecursiveNode
+  dino_runner.js                  DinoRunner, RetryQueue
+```
