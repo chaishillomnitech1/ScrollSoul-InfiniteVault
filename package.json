@@ -1,0 +1,41 @@
+{
+  "name": "scrollsoul-infinitevault",
+  "version": "2.0.0",
+  "description": "Eternal nexus for multi-layer scaling, Spotify royalty harvesting, AI loops, NFT blockchain, universal governance, and full GoHighLevel sub-account integration. ALLĀHU AKBAR!",
+  "main": "src/js/index.js",
+  "scripts": {
+    "start": "node examples/js/full_integration_example.js",
+    "test": "node examples/js/full_integration_example.js && node examples/js/gohighlevel_example.js",
+    "dino": "node -e \"const { DinoRunner, DINO_ASCII } = require('./dino_runner'); console.log(DINO_ASCII); new DinoRunner().announce();\""
+  },
+  "keywords": [
+    "scrollsoul",
+    "gohighlevel",
+    "crm",
+    "sub-accounts",
+    "blockchain",
+    "nft",
+    "governance",
+    "ai-loops",
+    "spotify-royalty",
+    "scaling",
+    "karma",
+    "infinite-vault"
+  ],
+  "author": "ScrollSoul Contributors",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chaishillomnitech1/ScrollSoul-InfiniteVault.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "src/js/",
+    "multi_layer_scaling_script.js",
+    "spotify_royalty_harvesting.js",
+    "ai_loop_enhancements.js",
+    "dino_runner.js"
+  ]
+}

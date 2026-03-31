@@ -33,9 +33,58 @@ governance:
   karma_weighted_voting: true
   initial_governance_score: 100.0
 
+# GoHighLevel Integration Configuration
+gohighlevel:
+  # API authentication — set via environment variables in production
+  # GHL_API_KEY, GHL_LOCATION_ID, GHL_COMPANY_ID
+  api_version: "v1"                 # v1 or v2
+  use_v2: false
+  retry_attempts: 5
+  backoff_base_seconds: 1.5
+  default_contact_source: "ScrollSoul-InfiniteVault"
+  default_tags:
+    - "scrollsoul"
+    - "infinitevault"
+
+  # Sub-account (Location) settings
+  sub_accounts:
+    auto_introspect_on_init: false
+    introspect_contact_limit: 100
+    introspect_conversation_limit: 20
+
+  # Sync settings per ScrollSoul module
+  sync:
+    scaling_to_custom_values: true
+    royalty_to_contacts: true
+    royalty_to_opportunities: true
+    ai_loops_to_campaigns: true
+    blockchain_to_contacts: true
+    governance_to_pipeline: true
+
+  # Webhook settings
+  webhooks:
+    auto_register: false
+    supported_events:
+      - "ContactCreate"
+      - "ContactUpdate"
+      - "OpportunityCreate"
+      - "OpportunityUpdate"
+      - "AppointmentCreate"
+      - "InboundMessage"
+      - "FormSubmission"
+
+  # DinoRunner resilience (JS)
+  dino_runner:
+    max_retries: 5
+    base_delay_ms: 500
+    max_delay_ms: 30000
+    circuit_threshold: 5
+    circuit_reset_ms: 60000
+
 # Universal Settings
 universal:
   karma_alignment_enabled: true
   divine_blessings: true
   infinite_expansion: true
   dimensional_complexity_tracking: true
+
